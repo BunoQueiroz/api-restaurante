@@ -13,15 +13,24 @@ class Product(models.Model):
     name = models.CharField(max_length=20, blank=False)
     description = models.CharField(max_length=150, blank=True)
     price = models.CharField(max_length=10, blank=False)
-    date_create = models.DateField(default=timezone.now)
+    date_create = models.DateTimeField(default=timezone.now)
     creator = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     image = models.ImageField(blank=True, upload_to='products/%Y/%m/%d')
+
+    def __str__(self) -> str:
+        return self.name
 
 class Order(models.Model):
     product = models.ForeignKey(Product, on_delete=models.DO_NOTHING)
     amount = models.CharField(max_length=2, blank=None, default='1')
     time = models.DateTimeField(default=timezone.now)
 
+    def __str__(self) -> str:
+        return self.amount + f' {self.product.name}'
+
 class Account(models.Model):
-    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    client = models.OneToOneField(Client, on_delete=models.CASCADE)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
+
+    def __str__(self) -> str:
+        return self.client
